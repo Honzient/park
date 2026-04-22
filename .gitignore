@@ -1,0 +1,37 @@
+# Only keep the three runnable projects
+/*
+!/.gitignore
+!/smart-parking-server/
+!/smart-parking-server/**
+!/smart-parking-web/
+!/smart-parking-web/**
+!/smart-parking-ai/
+!/smart-parking-ai/**
+
+# Backend
+smart-parking-server/target/
+smart-parking-server/*.log
+smart-parking-server/*.pid
+smart-parking-server/.idea/
+
+# Frontend
+smart-parking-web/node_modules/
+smart-parking-web/dist/
+smart-parking-web/.vscode/
+smart-parking-web/*.local
+
+# AI runtime/cache/output
+smart-parking-ai/*.log
+smart-parking-ai/*.pid
+smart-parking-ai/__pycache__/
+smart-parking-ai/.cache/
+smart-parking-ai/.tmp/
+smart-parking-ai/.paddle/
+smart-parking-ai/.paddleocr/
+smart-parking-ai/.paddlex/
+smart-parking-ai/.ultralytics/
+smart-parking-ai/.EasyOCR/
+smart-parking-ai/runs/
+smart-parking-ai/artifacts/
+smart-parking-ai/input_data/
+smart-parking-ai/models/

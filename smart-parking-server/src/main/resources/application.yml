@@ -1,0 +1,84 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    max-swallow-size: -1
+    max-http-form-post-size: ${SERVER_TOMCAT_MAX_HTTP_FORM_POST_SIZE:220MB}
+
+spring:
+  application:
+    name: smart-parking-server
+  servlet:
+    multipart:
+      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE:200MB}
+      max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE:220MB}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/smart_parking?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:123456}
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:127.0.0.1}
+      port: ${SPRING_REDIS_PORT:6379}
+      database: ${SPRING_REDIS_DATABASE:0}
+      timeout: 3s
+      password: ${SPRING_REDIS_PASSWORD:}
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+  sql:
+    init:
+      mode: ${SPRING_SQL_INIT_MODE:never}
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+      encoding: UTF-8
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+parking:
+  jwt:
+    secret: ReplaceWithYourOwnAtLeast32CharsSecretKey_2026
+    expire-hours: 12
+  captcha:
+    expire-minutes: 5
+    width: 140
+    height: 46
+    length: 4
+  billing:
+    hourly-rate: 8.00
+  recognition:
+    engine: yolo11
+    python-command: ${PARKING_RECOGNITION_PYTHON:D:/Python/python.exe}
+    script-path: ${PARKING_RECOGNITION_SCRIPT:smart-parking-ai/run_inference.py}
+    model-path: smart-parking-ai/models/yolo11n_plate.pt
+    fallback-model:
+    conf-threshold: ${PARKING_RECOGNITION_CONF:0.45}
+    yolo-device: ${PARKING_RECOGNITION_YOLO_DEVICE:0}
+    ocr-device: ${PARKING_RECOGNITION_OCR_DEVICE:gpu}
+    inference-api-base-url: ${PARKING_RECOGNITION_API_BASE_URL:http://127.0.0.1:8090}
+    inference-api-connect-timeout-ms: ${PARKING_RECOGNITION_API_CONNECT_TIMEOUT_MS:5000}
+    inference-api-read-timeout-ms: ${PARKING_RECOGNITION_API_READ_TIMEOUT_MS:180000}
+    timeout-seconds: ${PARKING_RECOGNITION_TIMEOUT:180}
+    video-frame-step: ${PARKING_RECOGNITION_VIDEO_FRAME_STEP:12}
+    video-max-frames: ${PARKING_RECOGNITION_VIDEO_MAX_FRAMES:240}
+    enable-ocr: ${PARKING_RECOGNITION_ENABLE_OCR:true}
+    yolo-config-dir: ${PARKING_RECOGNITION_YOLO_CONFIG_DIR:.ultralytics}
+    paddle-home-dir: ${PARKING_RECOGNITION_PADDLE_HOME_DIR:smart-parking-ai/.paddle}
+    paddlex-home-dir: ${PARKING_RECOGNITION_PADDLEX_HOME_DIR:smart-parking-ai/.paddlex}
+    cache-home-dir: ${PARKING_RECOGNITION_CACHE_HOME_DIR:smart-parking-ai/.cache}
+    python-temp-dir: ${PARKING_RECOGNITION_TEMP_DIR:smart-parking-ai/.tmp}
+
+logging:
+  level:
+    com.parking: info

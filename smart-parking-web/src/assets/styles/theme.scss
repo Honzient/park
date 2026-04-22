@@ -1,0 +1,26 @@
+// Material Design 3 (MD3) 全局风格变量覆写
+
+// 强制 Element Plus 使用 12px 的圆角规范
+$border-radius: (
+  'base': 12px,
+  'small': 8px,
+  'round': 24px,
+);
+
+// MD3 主题色调 (你可以根据喜好修改 primary 的色值)
+$colors: (
+  'primary': (
+    'base': #6750A4,
+  ),
+  'success': (
+    'base': #006A60,
+  ),
+  'danger': (
+    'base': #B3261E,
+  )
+);
+
+// 页面基础浅灰背景色
+$bg-color: (
+  'page': #F7F8FA,
+);
