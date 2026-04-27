@@ -61,7 +61,7 @@
 
       <MD3Card>
         <div class="panel-head">
-          <h3>今日车流量与收入趋势</h3>
+          <h3>车流量与收入趋势</h3>
           <span class="panel-sub">范围：{{ rangeLabel }}</span>
         </div>
         <div ref="trendChartRef" class="chart-box trend-box"></div>

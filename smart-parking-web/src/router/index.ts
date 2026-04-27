@@ -109,6 +109,12 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        path: 'assistant',
+        name: 'Assistant',
+        component: () => import('@/views/assistant/index.vue'),
+        meta: { title: '智能助手' },
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/profile/index.vue'),

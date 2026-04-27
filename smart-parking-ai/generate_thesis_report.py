@@ -340,7 +340,7 @@ def add_figure_and_repro_section(doc: Document, rows: list[dict[str, Any]], spli
     doc.add_paragraph(
         "2) 基线训练：\n"
         "D:\\Python\\python.exe train_yolo.py --dataset-yaml "
-        f"{dataset_yaml} --base-model D:\\project\\yolo11n.pt --epochs 5 --imgsz 640 --batch 8 --device 0 "
+        f"{dataset_yaml} --base-model D:\\project\\smart-parking-ai\\models\\yolo11n.pt --epochs 5 --imgsz 640 --batch 8 --device 0 "
         "--project runs/train --name ccpd_mixed_yolo11n_ab0_base_e5_f20 --train-arg fraction=0.2 "
         "--tag ccpd_mixed --tag ablation --tag baseline "
         "--save-report artifacts/training/ccpd_mixed_yolo11n_ab0_base_e5_f20.json"
@@ -348,7 +348,7 @@ def add_figure_and_repro_section(doc: Document, rows: list[dict[str, Any]], spli
     doc.add_paragraph(
         "3) 改进训练（示例）：\n"
         "D:\\Python\\python.exe train_yolo.py --dataset-yaml "
-        f"{dataset_yaml} --base-model D:\\project\\yolo11n.pt --epochs 5 --imgsz 640 --batch 8 --device 0 "
+        f"{dataset_yaml} --base-model D:\\project\\smart-parking-ai\\models\\yolo11n.pt --epochs 5 --imgsz 640 --batch 8 --device 0 "
         "--project runs/train --name ccpd_mixed_yolo11n_ab1_coslr_e5_f20 --train-arg fraction=0.2 --train-arg cos_lr=true "
         "--tag ccpd_mixed --tag ablation --tag coslr "
         "--save-report artifacts/training/ccpd_mixed_yolo11n_ab1_coslr_e5_f20.json"

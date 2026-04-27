@@ -11,7 +11,7 @@ from docx import Document
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_RECORD_ROOT = PROJECT_ROOT / "plate_thesis_records"
+DEFAULT_RECORD_ROOT = PROJECT_ROOT / "project_archive" / "moved_dirs" / "plate_thesis_records"
 
 
 def parse_args() -> argparse.Namespace:

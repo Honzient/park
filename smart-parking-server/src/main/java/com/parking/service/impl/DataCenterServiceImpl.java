@@ -97,7 +97,7 @@ public class DataCenterServiceImpl implements DataCenterService {
             workbook.write(outputStream);
             return outputStream.toByteArray();
         } catch (Exception exception) {
-            throw new RuntimeException("Failed to export datacenter excel", exception);
+            throw new RuntimeException("导出数据中心表格失败", exception);
         }
     }
 
@@ -140,7 +140,7 @@ public class DataCenterServiceImpl implements DataCenterService {
             document.close();
             return outputStream.toByteArray();
         } catch (Exception exception) {
-            throw new RuntimeException("\u5bfc\u51fa\u6570\u636e\u4e2d\u5fc3 PDF \u5931\u8d25", exception);
+            throw new RuntimeException("导出数据中心文档失败", exception);
         }
     }
 
@@ -389,6 +389,17 @@ public class DataCenterServiceImpl implements DataCenterService {
 
     private QueryRange resolveQueryRange(DataCenterRecordQueryDTO source) {
         LocalDateTime now = LocalDateTime.now();
+        if (source.getStartTime() != null || source.getEndTime() != null) {
+            LocalDateTime startTime = source.getStartTime() == null
+                    ? LocalDate.of(2000, 1, 1).atStartOfDay()
+                    : source.getStartTime();
+            LocalDateTime endTime = source.getEndTime() == null ? now : source.getEndTime();
+            if (startTime.isAfter(endTime)) {
+                throw new BusinessException(400, "Start time must be earlier than end time");
+            }
+            return new QueryRange(startTime, endTime);
+        }
+
         String preset = source.getRangePreset() == null ? "LAST_30_DAYS" : source.getRangePreset().toUpperCase();
 
         LocalDateTime startTime;

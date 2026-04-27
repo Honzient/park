@@ -5,7 +5,7 @@
         <h2 class="page-title">车辆识别 / 识别记录</h2>
         <p class="page-desc">支持自动筛选、低准确率高亮与表格导出</p>
       </div>
-      <el-button v-has-permi="'recognition:query'" class="gradient-btn" @click="handleExport">导出Excel</el-button>
+      <el-button v-has-permi="'recognition:query'" class="gradient-btn" @click="handleExport">导出表格</el-button>
     </div>
 
     <MD3Card>
@@ -229,7 +229,7 @@ const tableRowClassName = ({ row }: { row: RecognitionRecord }): string => {
 
 const handleExport = async (): Promise<void> => {
   if (!authStore.hasPermission('recognition:query')) {
-    ElMessage.error('Forbidden: no permission to export recognition records');
+    ElMessage.error('当前账号没有导出识别记录的权限');
     return;
   }
   try {

@@ -15,6 +15,7 @@ from core.runtime_env import bootstrap_runtime_env
 
 AI_ROOT = Path(__file__).resolve().parent
 PROJECT_ROOT = AI_ROOT.parent
+DEFAULT_RECORD_ROOT = PROJECT_ROOT / "project_archive" / "moved_dirs" / "plate_thesis_records"
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,7 +29,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--record-root",
-        default=str(PROJECT_ROOT / "plate_thesis_records"),
+        default=str(DEFAULT_RECORD_ROOT),
         help="Root experiment directory.",
     )
     parser.add_argument(
@@ -46,12 +47,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 3407, 2026], help="Seed list.")
     parser.add_argument(
         "--base-train-report",
-        default=str(PROJECT_ROOT / "plate_thesis_records" / "reports" / "training" / "final_ab3_plate960_coslr_f20_full_e20.json"),
+        default=str(DEFAULT_RECORD_ROOT / "reports" / "training" / "final_ab3_plate960_coslr_f20_full_e20.json"),
         help="Existing formal training report used as the reference seed.",
     )
     parser.add_argument(
         "--base-eval-report",
-        default=str(PROJECT_ROOT / "plate_thesis_records" / "reports" / "eval" / "final_ab3_plate960_coslr_f20_full_e20_test_eval.json"),
+        default=str(DEFAULT_RECORD_ROOT / "reports" / "eval" / "final_ab3_plate960_coslr_f20_full_e20_test_eval.json"),
         help="Existing formal test evaluation report used as the reference seed.",
     )
     parser.add_argument("--skip-existing", action="store_true", help="Reuse finished reports when present.")

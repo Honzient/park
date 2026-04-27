@@ -6,8 +6,8 @@
         <p class="page-desc">默认近30天，支持筛选、图表联动与数据导出</p>
       </div>
       <div class="export-actions">
-        <el-button v-has-permi="'datacenter:export:excel'" class="gradient-btn" @click="onExportExcel">导出Excel</el-button>
-        <el-button v-has-permi="'datacenter:export:pdf'" @click="onExportPdf">导出PDF</el-button>
+        <el-button v-has-permi="'datacenter:export:excel'" class="gradient-btn" @click="onExportExcel">导出表格</el-button>
+        <el-button v-has-permi="'datacenter:export:pdf'" @click="onExportPdf">导出文档</el-button>
       </div>
     </div>
 
@@ -473,22 +473,22 @@ const resetAll = (): void => {
 
 const onExportExcel = async (): Promise<void> => {
   if (!authStore.hasPermission('datacenter:export:excel')) {
-    ElMessage.error('Forbidden: no permission to export Excel');
+    ElMessage.error('当前账号没有导出数据中心表格的权限');
     return;
   }
   const blob = await exportDataCenterExcel(buildPayload());
   downloadBlob(blob, `\u6570\u636e\u4e2d\u5fc3\u505c\u8f66\u8bb0\u5f55-${Date.now()}.xlsx`, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  ElMessage.success('Excel导出成功');
+  ElMessage.success('表格导出成功');
 };
 
 const onExportPdf = async (): Promise<void> => {
   if (!authStore.hasPermission('datacenter:export:pdf')) {
-    ElMessage.error('Forbidden: no permission to export PDF');
+    ElMessage.error('当前账号没有导出数据中心文档的权限');
     return;
   }
   const blob = await exportDataCenterPdf(buildPayload());
   downloadBlob(blob, `\u6570\u636e\u4e2d\u5fc3\u505c\u8f66\u8bb0\u5f55-${Date.now()}.pdf`, 'application/pdf');
-  ElMessage.success('PDF导出成功');
+  ElMessage.success('文档导出成功');
 };
 
 const handleResize = (): void => {

@@ -15,6 +15,9 @@ from core.runtime_env import bootstrap_runtime_env
 
 AI_ROOT = Path(__file__).resolve().parent
 PROJECT_ROOT = AI_ROOT.parent
+DEFAULT_RECORD_ROOT = PROJECT_ROOT / "project_archive" / "moved_dirs" / "plate_thesis_records"
+DEFAULT_GENERIC_BASE_MODEL = AI_ROOT / "models" / "yolo11n.pt"
+DEFAULT_PLATE_BASE_MODEL = AI_ROOT / "models" / "yolo11n_plate.pt"
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,7 +31,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--record-root",
-        default=str(PROJECT_ROOT / "plate_thesis_records"),
+        default=str(DEFAULT_RECORD_ROOT),
         help="Root directory used to store paper records, logs, reports, and YOLO runs",
     )
     parser.add_argument(
@@ -51,12 +54,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--skip-existing", action="store_true", help="Reuse existing reports if present")
     parser.add_argument(
         "--generic-base-model",
-        default=str((PROJECT_ROOT / "yolo11n.pt").resolve()),
+        default=str(DEFAULT_GENERIC_BASE_MODEL.resolve()),
         help="Generic pretrained base model",
     )
     parser.add_argument(
         "--plate-base-model",
-        default=str((AI_ROOT / "models" / "yolo11n_plate.pt").resolve()),
+        default=str(DEFAULT_PLATE_BASE_MODEL.resolve()),
         help="Plate-specific pretrained base model",
     )
     return parser.parse_args()
@@ -209,10 +212,10 @@ def write_plan(args: argparse.Namespace, paths: dict[str, Path]) -> None:
 ## Ablation Design
 
 1. `ab0_generic640_default_f20`
-   - Generic COCO `yolo11n.pt`
+   - Generic COCO `models/yolo11n.pt`
    - `imgsz=640`, default scheduler
 2. `ab1_generic640_coslr_f20`
-   - Generic COCO `yolo11n.pt`
+   - Generic COCO `models/yolo11n.pt`
    - `imgsz=640`, `cos_lr=true`
 3. `ab2_plate640_coslr_f20`
    - Plate-specific `models/yolo11n_plate.pt`

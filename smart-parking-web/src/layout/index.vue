@@ -52,6 +52,10 @@
           <el-menu-item index="/recognition/records">识别记录</el-menu-item>
         </el-sub-menu>
 
+        <el-menu-item index="/assistant">
+          <el-icon><ChatLineRound /></el-icon>
+          <span>智能助手</span>
+        </el-menu-item>
         <el-menu-item index="/profile">
           <el-icon><User /></el-icon>
           <span>个人中心</span>
@@ -94,6 +98,7 @@
         <el-menu-item index="/recognition/image">车辆识别 / 图片识别</el-menu-item>
         <el-menu-item index="/recognition/video">车辆识别 / 视频识别</el-menu-item>
         <el-menu-item index="/recognition/records">车辆识别 / 识别记录</el-menu-item>
+        <el-menu-item index="/assistant">智能助手</el-menu-item>
         <el-menu-item index="/profile">个人中心</el-menu-item>
       </el-menu>
     </el-drawer>

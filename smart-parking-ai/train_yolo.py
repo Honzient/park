@@ -9,11 +9,17 @@ from typing import Any
 from core.reporting import extract_metric_bundle, to_jsonable
 from core.runtime_env import bootstrap_runtime_env
 
+AI_ROOT = Path(__file__).resolve().parent
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train YOLOv11 plate detector")
     parser.add_argument("--dataset-yaml", required=True, help="Path to dataset.yaml")
-    parser.add_argument("--base-model", default="yolo11n.pt", help="Pretrained model or checkpoint path")
+    parser.add_argument(
+        "--base-model",
+        default=str((AI_ROOT / "models" / "yolo11n.pt").resolve()),
+        help="Pretrained model or checkpoint path",
+    )
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--imgsz", type=int, default=640)
     parser.add_argument("--batch", type=int, default=16)

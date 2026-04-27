@@ -229,12 +229,12 @@ public class RecognitionServiceImpl implements RecognitionService {
         List<RecognitionRecordVO> exportRecords = loadExportRecords(queryDTO);
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            Sheet sheet = workbook.createSheet("Recognition Records");
+            Sheet sheet = workbook.createSheet("识别记录");
             Row header = sheet.createRow(0);
-            header.createCell(0).setCellValue("Plate Number");
-            header.createCell(1).setCellValue("Recognition Time");
-            header.createCell(2).setCellValue("Accuracy (%)");
-            header.createCell(3).setCellValue("Recognition Type");
+            header.createCell(0).setCellValue("车牌号");
+            header.createCell(1).setCellValue("识别时间");
+            header.createCell(2).setCellValue("识别准确率（%）");
+            header.createCell(3).setCellValue("识别类型");
 
             int rowIndex = 1;
             for (RecognitionRecordVO record : exportRecords) {
@@ -248,7 +248,7 @@ public class RecognitionServiceImpl implements RecognitionService {
             workbook.write(outputStream);
             return outputStream.toByteArray();
         } catch (Exception exception) {
-            throw new BusinessException(500, "Failed to export recognition excel");
+            throw new BusinessException(500, "导出识别记录表格失败");
         }
     }
 
@@ -1263,12 +1263,12 @@ public class RecognitionServiceImpl implements RecognitionService {
 
     private String toRecognitionTypeLabel(String recognitionType) {
         if ("VIDEO".equalsIgnoreCase(recognitionType)) {
-            return "Video";
+            return "视频";
         }
         if ("IMAGE".equalsIgnoreCase(recognitionType)) {
-            return "Image";
+            return "图片";
         }
-        return recognitionType == null ? "Unknown" : recognitionType;
+        return recognitionType == null ? "未知" : recognitionType;
     }
 
     private void applySort(LambdaQueryWrapper<RecognitionRecord> wrapper, String sortField, String sortOrder) {

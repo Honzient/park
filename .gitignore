@@ -24,6 +24,8 @@ smart-parking-web/*.local
 smart-parking-ai/*.log
 smart-parking-ai/*.pid
 smart-parking-ai/__pycache__/
+smart-parking-ai/**/__pycache__/
+smart-parking-ai/**/*.pyc
 smart-parking-ai/.cache/
 smart-parking-ai/.tmp/
 smart-parking-ai/.paddle/
