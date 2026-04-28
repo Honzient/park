@@ -124,6 +124,43 @@ public class DeepSeekChatClient {
         }
     }
 
+    public Optional<String> callText(List<Map<String, Object>> messages) {
+        if (!isAvailable()) {
+            return Optional.empty();
+        }
+
+        try {
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload.put("model", StringUtils.hasText(properties.getModel())
+                    ? properties.getModel().trim()
+                    : TOOL_CALLING_MODEL);
+            payload.put("messages", messages);
+            payload.put("temperature", 0.3);
+            payload.put("stream", false);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+            headers.setBearerAuth(properties.getApiKey().trim());
+
+            ResponseEntity<String> response = buildRestTemplate().postForEntity(
+                    buildChatUrl(),
+                    new HttpEntity<>(payload, headers),
+                    String.class
+            );
+
+            JsonNode root = objectMapper.readTree(response.getBody());
+            String content = root.path("choices").path(0).path("message").path("content").asText(null);
+            return StringUtils.hasText(content) ? Optional.of(content.trim()) : Optional.empty();
+        } catch (RestClientException exception) {
+            log.warn("DeepSeek text request failed: {}", exception.getMessage());
+            return Optional.empty();
+        } catch (Exception exception) {
+            log.warn("DeepSeek text response parse failed: {}", exception.getMessage());
+            return Optional.empty();
+        }
+    }
+
     private RestTemplate buildRestTemplate() {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(properties.getTimeoutMs());

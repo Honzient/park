@@ -15,11 +15,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -102,6 +102,22 @@ public class AssistantLlmParser {
         }
     }
 
+    public Optional<String> replyConversation(AssistantChatRequestDTO request,
+                                              Set<AssistantCapability> availableCapabilities) {
+        if (request == null || !StringUtils.hasText(request.getMessage()) || !deepSeekChatClient.isAvailable()) {
+            return Optional.empty();
+        }
+
+        try {
+            return deepSeekChatClient.callText(buildConversationMessages(request, availableCapabilities))
+                    .map(String::trim)
+                    .filter(StringUtils::hasText);
+        } catch (Exception exception) {
+            log.warn("Assistant LLM conversation reply failed: {}", exception.getMessage());
+            return Optional.empty();
+        }
+    }
+
     private OptionalRoute parseRoute(AssistantChatRequestDTO request,
                                      Set<AssistantCapability> availableCapabilities) throws Exception {
         List<Map<String, Object>> messages = buildMessages(request, availableCapabilities);
@@ -134,21 +150,18 @@ public class AssistantLlmParser {
                 "role", "system",
                 "content", buildSystemPrompt(availableCapabilities)
         ));
+        appendHistoryAndLatestUserMessage(messages, request);
+        return messages;
+    }
 
-        List<AssistantConversationMessageDTO> history = request.getHistory() == null
-                ? List.of()
-                : request.getHistory();
-        int fromIndex = Math.max(history.size() - Math.max(properties.getMaxHistoryMessages(), 0), 0);
-        for (AssistantConversationMessageDTO item : history.subList(fromIndex, history.size())) {
-            String role = normalizeRole(item == null ? null : item.getRole());
-            String content = item == null ? null : item.getContent();
-            if (!StringUtils.hasText(role) || !StringUtils.hasText(content)) {
-                continue;
-            }
-            messages.add(Map.of("role", role, "content", content.trim()));
-        }
-
-        messages.add(Map.of("role", "user", "content", request.getMessage().trim()));
+    private List<Map<String, Object>> buildConversationMessages(AssistantChatRequestDTO request,
+                                                                Set<AssistantCapability> availableCapabilities) {
+        List<Map<String, Object>> messages = new ArrayList<>();
+        messages.add(Map.of(
+                "role", "system",
+                "content", buildConversationPrompt(availableCapabilities)
+        ));
+        appendHistoryAndLatestUserMessage(messages, request);
         return messages;
     }
 
@@ -207,6 +220,34 @@ public class AssistantLlmParser {
                 .append("-04-16 00:00:00\",\"endTime\":\"\",\"status\":\"\",\"statuses\":[],\"recognitionType\":\"\",\"minAccuracy\":\"\",\"recordId\":\"\",\"fee\":\"\",\"exitTime\":\"\",\"targetSpotNo\":\"\",\"targetStatus\":\"\",\"keyword\":\"\",\"userHint\":\"\",\"roleHint\":\"\",\"username\":\"\",\"realName\":\"\",\"phone\":\"\",\"permissionsText\":\"\",\"permissionOperation\":\"\",\"permissions\":[],\"oldPassword\":\"\",\"newPassword\":\"\"}\n");
         builder.append("- User: 把管理员角色补上用户查看权限\n");
         builder.append("  Output: {\"capabilityCode\":\"ADMIN_ROLE_PERMISSION_UPDATE\",\"range\":\"\",\"rangePreset\":\"\",\"lastDays\":\"\",\"plateNumber\":\"\",\"parkNo\":\"\",\"startTime\":\"\",\"endTime\":\"\",\"status\":\"\",\"statuses\":[],\"recognitionType\":\"\",\"minAccuracy\":\"\",\"recordId\":\"\",\"fee\":\"\",\"exitTime\":\"\",\"targetSpotNo\":\"\",\"targetStatus\":\"\",\"keyword\":\"\",\"userHint\":\"\",\"roleHint\":\"管理员\",\"username\":\"\",\"realName\":\"\",\"phone\":\"\",\"permissionsText\":\"用户查看权限\",\"permissionOperation\":\"ADD\",\"permissions\":[],\"oldPassword\":\"\",\"newPassword\":\"\"}\n");
+        return builder.toString();
+    }
+
+    private String buildConversationPrompt(Set<AssistantCapability> availableCapabilities) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("You are a friendly Chinese assistant inside a smart parking system.\n");
+        builder.append("Behavior rules:\n");
+        builder.append("- For daily conversation, answer naturally, directly and clearly in Chinese.\n");
+        builder.append("- Never claim that you have executed backend operations, modified data, or queried internal records in this mode.\n");
+        builder.append("- If the user asks for system operations, explain that this requires explicit command routing and ask for the target object and desired action.\n");
+        builder.append("- For factual questions (including products, brands, and tech topics), provide a direct best-effort answer first instead of refusing.\n");
+        builder.append("- Do not default to saying you cannot access real-time data.\n");
+        builder.append("- Only mention uncertainty or possible staleness when the user explicitly asks for latest/today/recent real-time details.\n");
+        builder.append("- When latest details are requested and uncertainty exists, still provide likely known info first, then add one short sentence suggesting online verification.\n");
+        builder.append("- Keep answers concise by default unless the user asks for details.\n");
+        builder.append("Current local time is ")
+                .append(LocalDateTime.now().format(DATE_TIME_FORMATTER))
+                .append(" in timezone Asia/Shanghai.\n");
+
+        if (availableCapabilities != null && !availableCapabilities.isEmpty()) {
+            builder.append("The current account can route these capabilities when needed: ");
+            String joinedCapabilities = availableCapabilities.stream()
+                    .sorted(Comparator.comparing(AssistantCapability::code))
+                    .map(AssistantCapability::code)
+                    .reduce((left, right) -> left + ", " + right)
+                    .orElse("");
+            builder.append(joinedCapabilities).append(".\n");
+        }
         return builder.toString();
     }
 
@@ -285,6 +326,24 @@ public class AssistantLlmParser {
                 "description", description,
                 "items", Map.of("type", "string")
         );
+    }
+
+    private void appendHistoryAndLatestUserMessage(List<Map<String, Object>> messages,
+                                                   AssistantChatRequestDTO request) {
+        List<AssistantConversationMessageDTO> history = request.getHistory() == null
+                ? List.of()
+                : request.getHistory();
+        int fromIndex = Math.max(history.size() - Math.max(properties.getMaxHistoryMessages(), 0), 0);
+        for (AssistantConversationMessageDTO item : history.subList(fromIndex, history.size())) {
+            String role = normalizeRole(item == null ? null : item.getRole());
+            String content = item == null ? null : item.getContent();
+            if (!StringUtils.hasText(role) || !StringUtils.hasText(content)) {
+                continue;
+            }
+            messages.add(Map.of("role", role, "content", content.trim()));
+        }
+
+        messages.add(Map.of("role", "user", "content", request.getMessage().trim()));
     }
 
     private String normalizeRole(String role) {

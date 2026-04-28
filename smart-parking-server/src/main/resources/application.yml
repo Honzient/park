@@ -62,7 +62,7 @@ parking:
       enabled: ${PARKING_ASSISTANT_LLM_ENABLED:true}
       base-url: ${PARKING_ASSISTANT_LLM_BASE_URL:https://api.deepseek.com/beta}
       api-key: ${PARKING_ASSISTANT_LLM_API_KEY:sk-a26b3b767446467d8abbaba4cc96a33b}
-      model: ${PARKING_ASSISTANT_LLM_MODEL:deepseek-v4-flash}
+      model: ${PARKING_ASSISTANT_LLM_MODEL:deepseek-v4-pro}
       timeout-ms: ${PARKING_ASSISTANT_LLM_TIMEOUT_MS:1500000}
       max-history-messages: ${PARKING_ASSISTANT_LLM_MAX_HISTORY_MESSAGES:8}
   recognition:

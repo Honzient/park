@@ -37,3 +37,29 @@ smart-parking-ai/runs/
 smart-parking-ai/artifacts/
 smart-parking-ai/input_data/
 smart-parking-ai/models/
+
+# System & environment
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+*.pid
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Desktop.ini

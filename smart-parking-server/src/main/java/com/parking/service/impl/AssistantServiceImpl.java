@@ -120,7 +120,7 @@ public class AssistantServiceImpl implements AssistantService {
             if (unauthorizedIntent != null && !allowedCapabilities.contains(unauthorizedIntent.capability())) {
                 AssistantCapability capability = unauthorizedIntent.capability();
                 return new AssistantChatResponseVO(
-                        "当前账号没有“" + capability.displayName() + "”对应的权限，助手不能代你执行这个功能。",
+                        "\u5f53\u524d\u8d26\u53f7\u6ca1\u6709\u201c" + capability.displayName() + "\u201d\u5bf9\u5e94\u7684\u6743\u9650\uff0c\u52a9\u624b\u4e0d\u80fd\u4ee3\u4f60\u6267\u884c\u8fd9\u4e2a\u529f\u80fd\u3002",
                         capability.code(),
                         false,
                         null,
@@ -129,8 +129,23 @@ public class AssistantServiceImpl implements AssistantService {
                         capabilityVOs
                 );
             }
+
+            String conversationalReply = assistantLlmParser.replyConversation(request, allowedCapabilities)
+                    .orElse(null);
+            if (StringUtils.hasText(conversationalReply)) {
+                return new AssistantChatResponseVO(
+                        conversationalReply,
+                        null,
+                        false,
+                        null,
+                        null,
+                        List.of(),
+                        capabilityVOs
+                );
+            }
+
             return new AssistantChatResponseVO(
-                    "我暂时没能准确理解这句话。你可以继续直接描述要查询或要修改的业务对象。",
+                    "\u6211\u6682\u65f6\u6ca1\u80fd\u51c6\u786e\u7406\u89e3\u8fd9\u53e5\u8bdd\u3002\u4f60\u53ef\u4ee5\u7ee7\u7eed\u76f4\u63a5\u63cf\u8ff0\u8981\u67e5\u8be2\u6216\u8981\u4fee\u6539\u7684\u4e1a\u52a1\u5bf9\u8c61\u3002",
                     null,
                     false,
                     null,
@@ -139,7 +154,6 @@ public class AssistantServiceImpl implements AssistantService {
                     capabilityVOs
             );
         }
-
         AssistantCapability capability = intent.capability();
         if (!allowedCapabilities.contains(capability)) {
             return new AssistantChatResponseVO(
